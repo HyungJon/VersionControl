@@ -4,12 +4,11 @@ var bodyParser = require('body-parser');
 var router = express.Router();
 var port = 3000;
 
-var data = {}; // use object as database, at least for now
+var database = require('../../database/database');
+// var data = {}; // use object as database, at least for now
 // due to limitations of object and not using proper DB,
 // store for each key the history of values as arrays
 // where each element in array is a version consisting of posted value and timestamp when the request was received
-
-// TODO: extract DB to separate module to enable extension with proper DB
 
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({extended:true}));
@@ -34,24 +33,14 @@ router.route('/')
     var timestamp = Math.floor((new Date()).getTime() / 1000);
     console.log('POST /object - {key:' + key + ', value:' + val + '} at timestamp ' + timestamp);
 
-    var version = {value:val, timestamp:timestamp};
-
-    if (data[key]) {
-      data[key].unshift(version);
-    } else {
-      data[key] = [version];
-    }
-
+    database.insert(key, val, timestamp);
     return res.json({key:key, value:val, timestamp:timestamp});
   });
 
 router.route('/:key')
   .get(function(req, res) {
     var key = req.params.key;
-    var history = data[key];
-
     var out = {}
-
     var timestamp = req.query.timestamp;
 
     if (timestamp) {
@@ -59,13 +48,12 @@ router.route('/:key')
       // assumption: if timestamp is before earliest version, return empty object since the key did not exist in DB at that time
       // assumption: if timestamp is after latest version, return latest value since it will be the value at given timestamp unless the value is updated before that
       console.log('GET /object/' + key + '?timestamp=' + timestamp);
-      var version = history.find(function(ver) {
-        return (ver.timestamp <= timestamp);
-      });
-      if (version) out = {value: version.value};
+      var val = database.getBeforeTimestamp(key, timestamp);
+      if (val) out = {value:val};
+
     } else {
       console.log('GET /object/' + key);
-      out = {value:history[0].value};
+      out = {value:database.getLatest(key)};
     }
 
     res.json(out);
