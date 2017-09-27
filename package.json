@@ -1,0 +1,19 @@
+{
+  "name": "versioncontrol",
+  "version": "1.0.0",
+  "description": "Version controlled key-value storage with HTTP API",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HyungJon/VersionControl.git"
+  },
+  "author": "Kim Hyung Jon",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HyungJon/VersionControl/issues"
+  },
+  "homepage": "https://github.com/HyungJon/VersionControl#readme"
+}
