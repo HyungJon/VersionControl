@@ -42,9 +42,10 @@ router.route('/:key')
     var key = req.params.key;
     var out = {}
     var timestamp = req.query.timestamp;
+    var queryKeys = Object.keys(req.query);
 
     // handle invalid query
-    if (Object.keys(req.query).length > 1 || (Object.keys(req.query)[0] !== 'timestamp')) {
+    if (queryKeys.length > 1 || (queryKeys.length === 1 && queryKeys[0] !== 'timestamp')) {
       console.log('GET /object/' + key + ' - invalid query');
       return res.status(400).json({error:'Invalid query'});
     }
