@@ -13,8 +13,6 @@ var database = require('../../database/database');
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({extended:true}));
 
-// TODO: add status to response
-
 router.route('/')
   .get(function(req, res) {
     console.log('GET /object');
@@ -46,7 +44,7 @@ router.route('/:key')
     var timestamp = req.query.timestamp;
 
     // handle invalid query
-    if (Object.keys(req.query).length > 1 || (Object.keys(req.query)[0] !== timestamp)) {
+    if (Object.keys(req.query).length > 1 || (Object.keys(req.query)[0] !== 'timestamp')) {
       console.log('GET /object/' + key + ' - invalid query');
       return res.status(400).json({error:'Invalid query'});
     }
