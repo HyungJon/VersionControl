@@ -17,6 +17,8 @@ app.get('/', function(req, res) {
   res.send('Response');
 });
 
+
+// TODO: move functions for /object to separate router
 app.get('/object', function(req, res) {
   console.log('GET /object');
   res.json(data);
@@ -49,22 +51,23 @@ app.post('/object', function(req, res) {
 
 app.get('/object/:key', function(req, res) {
   var key = req.params.key;
-  console.log('GET /object/' + key);
-
   var history = data[key];
 
-  var out = {};
+  var out = {}
+
   var timestamp = req.query.timestamp;
 
   if (timestamp) {
     // find the earliest version that was added before (or at same time as) given timestamp
     // assumption: if timestamp is before earliest version, return empty object since the key did not exist in DB at that time
     // assumption: if timestamp is after latest version, return latest value since it will be the value at given timestamp unless the value is updated before that
+    console.log('GET /object/' + key + '?timestamp=' + timestamp);
     var version = history.find(function(ver) {
       return (ver.timestamp <= timestamp);
     });
     if (version) out = {value: version.value};
   } else {
+    console.log('GET /object/' + key);
     out = {value:history[0].value};
   }
 
