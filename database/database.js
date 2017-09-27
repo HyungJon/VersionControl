@@ -5,6 +5,10 @@
 
 // can later be extended to support a peroper database rather than JSON
 
+// due to limitations of object and not using proper DB,
+// store for each key the history of values as arrays
+// where each element in array is a version consisting of posted value and timestamp when the request was received
+
 function Database() {
   this.data = {};
 
@@ -25,17 +29,25 @@ function Database() {
     return (this.data[key] != null);
   };
 
-  this.getLatest = function(key) {
-    return this.data[key][0].value;
+  this.getLatest = function(key, callback) {
+    if (!this.data[key]) {
+      return callback({error:"Key not found"});
+    } else {
+      return callback(null, this.data[key][0].value);
+    }
   };
 
-  this.getBeforeTimestamp = function(key, timestamp) {
-    // TODO: since history is stored in reverse chronological order, see if binary search can be used
+  // find the latest version that was added before or at given timestamp
+  // assumption: if given timestamp is before earliest version, return empty object since the key did not exist in DB at that time
+  // assumption: if given timestamp is after latest version, return latest value since it will be the value at given timestamp as long as the value is not updated before that
+  this.getLatestBeforeTimestamp = function(key, timestamp, callback) {
+    if (!this.data[key]) return callback({error:"Key not found"});
     var version = this.data[key].find(function(ver) {
       return (ver.timestamp <= timestamp);
     });
-    if (version) return version.value;
-    return null; // TODO: look for a better way to handle this part, possibly using callback
+
+    if (!version) return callback(null, null);
+    return callback(null, version.value);
   };
 }
 
