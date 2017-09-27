@@ -17,6 +17,10 @@ function Database() {
     }
   };
 
+  this.getData = function() {
+    return this.data;
+  };
+
   this.containsKey = function(key) {
     return (this.data[key] != null);
   };

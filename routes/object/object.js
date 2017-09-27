@@ -18,7 +18,7 @@ router.use(bodyParser.urlencoded({extended:true}));
 router.route('/')
   .get(function(req, res) {
     console.log('GET /object');
-    res.status(202).json(data);
+    res.status(202).json(database.getData());
   })
 
   .post(function(req, res) {
