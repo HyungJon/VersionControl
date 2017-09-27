@@ -17,11 +17,16 @@ function Database() {
     }
   };
 
+  this.containsKey = function(key) {
+    return (this.data[key] != null);
+  };
+
   this.getLatest = function(key) {
     return this.data[key][0].value;
   };
 
   this.getBeforeTimestamp = function(key, timestamp) {
+    // TODO: since history is stored in reverse chronological order, see if binary search can be used
     var version = this.data[key].find(function(ver) {
       return (ver.timestamp <= timestamp);
     });

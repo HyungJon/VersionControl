@@ -23,9 +23,9 @@ router.route('/')
     // assumption: a POST request is accepted only if it contains one key-value pair
     // extending to allow one POST request to contain multiple pairs is possible, but may not be compatible with response structure as specified in requirements
     var keys = Object.keys(req.body);
-    if (keys.length != 1) {
-      console.log('Post /object - invalid number of keys');
-      return res.json({error:'Invalid number of keys'});
+    if (!keys || keys.length != 1) {
+      console.log('Post /object - invalid input');
+      return res.json({error:'Invalid input'});
     }
 
     var key = keys[0];
@@ -43,6 +43,16 @@ router.route('/:key')
     var out = {}
     var timestamp = req.query.timestamp;
 
+    if (!database.containsKey(key)) {
+      console.log('GET /object/' + key + ' - key not found');
+      return res.json({error:'Key not found'});
+    }
+
+    if (Object.keys(req.query).length > 1 || (Object.keys(req.query)[0] !== timestamp)) {
+      console.log('GET /object/' + key + ' - invalid query');
+      return res.json({error:'Invalid query'});
+    }
+
     if (timestamp) {
       // find the earliest version that was added before (or at same time as) given timestamp
       // assumption: if timestamp is before earliest version, return empty object since the key did not exist in DB at that time
@@ -56,7 +66,7 @@ router.route('/:key')
       out = {value:database.getLatest(key)};
     }
 
-    res.json(out);
+    return res.json(out);
   });
 
 module.exports = router;
