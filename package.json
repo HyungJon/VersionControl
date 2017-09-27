@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/HyungJon/VersionControl/issues"
   },
-  "homepage": "https://github.com/HyungJon/VersionControl#readme"
+  "homepage": "https://github.com/HyungJon/VersionControl#readme",
+  "dependencies": {
+    "express": "^4.15.5"
+  }
 }
