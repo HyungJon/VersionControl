@@ -13,10 +13,12 @@ var database = require('../../database/database');
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({extended:true}));
 
+// TODO: add status to response
+
 router.route('/')
   .get(function(req, res) {
     console.log('GET /object');
-    res.json(data);
+    res.status(202).json(data);
   })
 
   .post(function(req, res) {
@@ -25,7 +27,7 @@ router.route('/')
     var keys = Object.keys(req.body);
     if (!keys || keys.length != 1) {
       console.log('Post /object - invalid input');
-      return res.json({error:'Invalid input'});
+      return res.status(400).json({error:'Invalid input'});
     }
 
     var key = keys[0];
@@ -34,7 +36,7 @@ router.route('/')
     console.log('POST /object - {key:' + key + ', value:' + val + '} at timestamp ' + timestamp);
 
     database.insert(key, val, timestamp);
-    return res.json({key:key, value:val, timestamp:timestamp});
+    return res.status(200).json({key:key, value:val, timestamp:timestamp});
   });
 
 router.route('/:key')
@@ -43,14 +45,16 @@ router.route('/:key')
     var out = {}
     var timestamp = req.query.timestamp;
 
-    if (!database.containsKey(key)) {
-      console.log('GET /object/' + key + ' - key not found');
-      return res.json({error:'Key not found'});
-    }
-
+    // handle invalid query
     if (Object.keys(req.query).length > 1 || (Object.keys(req.query)[0] !== timestamp)) {
       console.log('GET /object/' + key + ' - invalid query');
-      return res.json({error:'Invalid query'});
+      return res.status(400).json({error:'Invalid query'});
+    }
+
+    // if key not in database, return error
+    if (!database.containsKey(key)) {
+      console.log('GET /object/' + key + ' - key not found');
+      return res.status(404).json({error:'Key not found'});
     }
 
     if (timestamp) {
@@ -66,7 +70,7 @@ router.route('/:key')
       out = {value:database.getLatest(key)};
     }
 
-    return res.json(out);
+    return res.status(200).json(out);
   });
 
 module.exports = router;
