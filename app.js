@@ -12,7 +12,7 @@ app.use(bodyParser.urlencoded({extended:true}));
 // handle requests to main
 app.get('/', function(req, res) {
   console.log('GET request to home');
-  res.send('Response');
+  res.status(200).send('Kim Hyung Jon\'s Version Controller application');
 });
 
 // assign router to /object
@@ -21,3 +21,5 @@ app.use('/object', routerObject);
 app.listen(port, function() {
   console.log('Version Control listening on port ' + port);
 });
+
+module.exports = app;

@@ -13,7 +13,7 @@ function Database() {
   this.data = {};
 
   this.insert = function(key, val, timestamp) {
-    var version = {key:key, value:val, timestamp:timestamp};
+    var version = {value:val, timestamp:timestamp};
     if (this.data[key]) {
       // design choice: if received value is already latest value, do nothing, for time and storage efficiency (but server still returns timestamp of POST request)
       // this is because this app is a version control and does not necessarily need to remember POST requests that make no difference to the database, and because this behavior in DB makes no observable difference outside this module
