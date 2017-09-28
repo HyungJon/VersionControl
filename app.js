@@ -22,4 +22,5 @@ app.listen(port, function() {
   console.log('Version Control listening on port ' + port);
 });
 
+// could be used for testing with mocha and chai
 module.exports = app;

@@ -5,10 +5,6 @@
 
 // can later be extended to support a peroper database rather than JSON
 
-// due to limitations of object and not using proper DB,
-// store for each key the history of values as arrays
-// where each element in array is a version consisting of posted value and timestamp when the request was received
-
 function Database() {
   this.data = {};
 
@@ -50,6 +46,8 @@ function Database() {
     var version = this.data[key].find(function(ver) {
       return (ver.timestamp <= timestamp);
     });
+    // possible improvement: since history array is sorted, it would be possible to employ binary search for more efficiency
+    // not implemented in this submission as using a proper database is a preferable option
 
     if (!version) return callback(null, null);
     return callback(null, version.value);
